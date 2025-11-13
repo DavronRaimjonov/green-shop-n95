@@ -3,7 +3,7 @@ import Product from "./product";
 
 const Dashboard = () => {
   return (
-    <section className="flex gap-2 mt-5">
+    <section className="flex items-start gap-2 mt-5">
       <Categories />
       <Product />
     </section>

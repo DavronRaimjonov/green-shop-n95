@@ -1,10 +1,14 @@
 import { Slider } from "antd";
 import { useState } from "react";
+import useSearchParam from "../../../../generic/searchParams";
 
 type RangeType = number[];
 const PriceRange = () => {
   const [value, setValue] = useState<RangeType>([0, 1000]);
-
+  const { setParam, paramValue } = useSearchParam();
+  const category = paramValue("category") || "house-plants";
+  const type = paramValue("type") || "all-plants";
+  const sort = paramValue("sort") || "default-sorting";
   const range = (e: RangeType) => {
     // setValue(e);
     setValue(e);
@@ -23,7 +27,18 @@ const PriceRange = () => {
         </span>
       </h2>
 
-      <button className="bg-[#46a358] rounded-lg font-medium text-white p-[7px_25px] mt-3 w-full cursor-pointer">
+      <button
+        onClick={() =>
+          setParam({
+            category,
+            range_min: value[0],
+            range_max: value[1],
+            type,
+            sort,
+          })
+        }
+        className="bg-[#46a358] rounded-lg font-medium text-white p-[7px_25px] mt-3 w-full cursor-pointer"
+      >
         Filter
       </button>
     </div>

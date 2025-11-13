@@ -2,8 +2,12 @@ import { Form, Input } from "antd";
 import GoogleIcon from "../../../../assets/icon/google";
 import FacebookIcon from "../../../../assets/icon/facebook";
 import type { LoginType } from "../../../../@types";
-import { useLoginMutate } from "../../../../hooks/useQuery/useQueryActions";
+import {
+  useLoginMutate,
+  useSignWithGoogle,
+} from "../../../../hooks/useQuery/useQueryActions";
 import { LoadingOutlined } from "@ant-design/icons";
+import { signInWithGoogle } from "../../../../config";
 
 const Login = () => {
   const input_style: string = "h-[40px] mt-2 !border-[#46A358]";
@@ -11,6 +15,7 @@ const Login = () => {
     "border h-[40px] border-[#EAEAEA] rounded-md flex items-center justify-center gap-3 mb-4 cursor-pointer";
 
   const { mutate, isPending } = useLoginMutate();
+  const { mutate: mutateGoogle } = useSignWithGoogle();
   const onAuth = (e: LoginType) => {
     mutate(e);
   };
@@ -60,7 +65,12 @@ const Login = () => {
           <p className="w-[40%]text-[#3D3D3D] text-[13px]">Or login with</p>
           <div className="w-[30%] h-[2px] bg-[#EAEAEA]"></div>
         </div>
-        <div className={`${icon_style}`}>
+        <div
+          onClick={async () => {
+            mutateGoogle();
+          }}
+          className={`${icon_style}`}
+        >
           <GoogleIcon />
           <p>Login with Google</p>
         </div>

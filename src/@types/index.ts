@@ -67,4 +67,12 @@ export interface ProductType {
   title: string;
   views: number;
   _id: string;
+  count?: number;
+  userPrice?: number;
+}
+
+export interface PlantsType {
+  id: number;
+  title: string;
+  path: string;
 }

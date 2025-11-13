@@ -11,6 +11,10 @@ const Categories = () => {
       url: "flower/category",
       pathname: "category",
     });
+  const { paramValue } = useSearchParam();
+  const category = paramValue("category") || "house-plants";
+  const range_min = paramValue("range_min") || 0;
+  const range_max = paramValue("range_max") || 1000;
 
   const { category_loader } = useLoader();
 
@@ -25,9 +29,13 @@ const Categories = () => {
           ? category_loader()
           : data?.map((value) => (
               <div
-                onClick={() => setParam({ category: value.route_path })}
+                onClick={() =>
+                  setParam({ category: value.route_path, range_min, range_max })
+                }
                 key={value._id}
-                className="flex items-center justify-between mb-3 hover:text-[#46a358] cursor-pointer"
+                className={`flex items-center justify-between mb-3 hover:text-[#46a358] cursor-pointer ${
+                  category === value.route_path && "text-[#46a358]"
+                }`}
               >
                 <h3>{value.title}</h3>
                 <h3>({value.count})</h3>

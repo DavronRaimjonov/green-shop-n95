@@ -7,5 +7,4 @@ import type { DispatchType, RootStore } from "../../redux";
 export const useReduxSelector: TypedUseSelectorHook<RootStore> = useSelector;
 export const useReduxDispatch = () => useDispatch<DispatchType>();
 
-
 // interfce
