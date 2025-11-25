@@ -1,19 +1,22 @@
 import { Form } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { CheckOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import { useReduxSelector } from "../../../hooks/userRedux";
-import { useEffect, useRef } from "react";
-import { useQueryHendler } from "../../../hooks/useQuery";
+import { useRef, useState } from "react";
 import { useAxios } from "../../../hooks/useAxios";
 import { useDispatch } from "react-redux";
 import { getCouponCode } from "../../../redux/product-slice";
+import Cookies from "js-cookie";
+import { authorizationModalVisibltiyConf } from "../../../redux/modal-slice";
 
 const CartTotal = () => {
+  const [loader, setLoader] = useState(false);
   const cupon_title_style = "text-[#3D3D3D] text-[15px] font-normal";
   const { data, coupon } = useReduxSelector((state) => state.product_slice);
   const couponRef = useRef<HTMLInputElement>(null);
-
-  console.log(coupon);
+  const userCookie = Cookies.get("user");
+  const user = userCookie ? JSON.parse(userCookie) : null;
+  const navigate = useNavigate();
   const totalPrice = data.reduce(
     (acc, value) => (acc += value.userPrice as number),
     16
@@ -23,12 +26,15 @@ const CartTotal = () => {
   const axios = useAxios();
 
   const getCoupon = () => {
+    setLoader(true);
     axios({
       url: "features/coupon",
       params: {
         coupon_code: couponRef.current?.value,
       },
-    }).then((res) => dispatch(getCouponCode(res.data.data.discount_for)));
+    })
+      .then((res) => dispatch(getCouponCode(res.data.data.discount_for)))
+      .finally(() => setLoader(false));
   };
 
   return (
@@ -46,20 +52,17 @@ const CartTotal = () => {
           className="border w-4/5  border-[#46A358] pl-[15px] placeholder:font-light rounded-l-lg rounded-r-none outline-none text-[18px] text-black font-normal"
         />
         <button
+          disabled={loader}
           onClick={getCoupon}
           className="bg-[#46A358] flex rounded-md items-center justify-center gap-1 text-base text-white w-1/5 rounded-l-none "
         >
-          <span> Apply</span>
+          <span>{loader ? <LoadingOutlined /> : "Apply"}</span>
         </button>
       </Form>
       <div className="mt-[20px]">
         <div className="flex justify-between items-center pt-3">
-          <h3 className={`${cupon_title_style}`}>Subtotal</h3>
-          <h2 className="text-[#3D3D3D] text-[18px] font-medium">$</h2>
-        </div>
-        <div className="flex justify-between items-center pt-3">
           <h3 className={`${cupon_title_style}`}>Coupon Discount</h3>
-          <h2 className="text-[#3D3D3D] text-[15px]">0$</h2>
+          <h2 className="text-[#3D3D3D] text-[15px]">{coupon} %</h2>
         </div>
         <div className="flex justify-between items-center pt-3">
           <h3 className={`${cupon_title_style}`}>Shiping</h3>
@@ -70,24 +73,25 @@ const CartTotal = () => {
         <div className="flex justify-between mt-[20px]">
           <h2 className="text-[#3D3D3D] text-[16px] font-bold">Total:</h2>
           <h1 className="text-[#46A358] text-[18px] font-bold">
+            {coupon
+              ? (totalPrice - (totalPrice * coupon) / 100)?.toFixed(2)
+              : totalPrice?.toFixed(2)}
+            $
             {coupon ? (
-              <div>
-                $
-                {(
-                  Number(totalPrice?.toFixed(2)) -
-                  (Number(totalPrice?.toFixed(2)) * coupon) / 100
-                ).toFixed(2)}
-              </div>
-            ) : (
-              <div>${totalPrice?.toFixed(2)}</div>
-            )}
-
-            {coupon && (
-              <span className="line-through">${totalPrice?.toFixed(2)}</span>
-            )}
+              <p className="line-through text-[14px]">
+                totalPrice?.toFixed(2) $
+              </p>
+            ) : null}
           </h1>
         </div>
-        <button className="bg-[#46A358] flex rounded-md items-center justify-center gap-1 text-base text-white w-full h-[40px] mt-[30px]">
+        <button
+          onClick={() =>
+            user
+              ? navigate("/product-checkout")
+              : dispatch(authorizationModalVisibltiyConf())
+          }
+          className="bg-[#46A358] flex rounded-md items-center justify-center gap-1 text-base text-white w-full h-[40px] mt-[30px]"
+        >
           Proceed To Checkout
         </button>
         <Link to={"/"} className="flex justify-center">

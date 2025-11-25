@@ -5,13 +5,15 @@ import {
   SearchOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { useReduxDispatch } from "../../hooks/userRedux";
+import { useReduxDispatch, useReduxSelector } from "../../hooks/userRedux";
 import { authorizationModalVisibltiyConf } from "../../redux/modal-slice";
 import Cookies from "js-cookie";
+import { Badge } from "antd";
 
 const Header = () => {
   const dispatch = useReduxDispatch();
   const navigate = useNavigate();
+  const { data } = useReduxSelector((state) => state.product_slice);
   const userCookie = Cookies.get("user");
   const user = userCookie ? JSON.parse(userCookie) : null;
   return (
@@ -33,10 +35,12 @@ const Header = () => {
         <div className="flex items-center gap-5">
           <SearchOutlined className="text-[20px]" />
           <BellOutlined className="text-[20px]" />
-          <ShoppingCartOutlined
-            onClick={() => navigate("/shop")}
-            className="text-[20px]"
-          />
+          <Badge count={data.length}>
+            <ShoppingCartOutlined
+              onClick={() => navigate("/shop")}
+              className="text-[20px]"
+            />
+          </Badge>
           <button
             onClick={() => dispatch(authorizationModalVisibltiyConf())}
             className="text-white w-[100px] h-[35px]  bg-[#46A358] flex items-center gap-1 justify-center rounded-md max-md:hidden cursor-pointer"

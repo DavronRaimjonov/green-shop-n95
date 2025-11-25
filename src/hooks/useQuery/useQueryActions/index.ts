@@ -66,3 +66,18 @@ export const useSignWithGoogle = () => {
     },
   });
 };
+
+export const useCheckooutMutation = () => {
+  const axios = useAxios();
+
+  return useMutation({
+    mutationKey: ["checkout"],
+    mutationFn: (data: object) =>
+      axios({ url: "order/make-order", body: data, method: "POST" }).then(
+        (res) => res.data.data
+      ),
+    onSuccess(data) {
+      console.log(data);
+    },
+  });
+};

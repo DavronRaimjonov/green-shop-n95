@@ -46,9 +46,41 @@ export const prodcut_slice = createSlice({
     getCouponCode(state, { payload }) {
       state.coupon = payload;
     },
+    increment(state, { payload }) {
+      state.data = state.data.map((value) => {
+        if (value._id === payload) {
+          return {
+            ...value,
+            count: Number(value.count) + 1,
+            userPrice: (Number(value.count) + 1) * value.price,
+          };
+        }
+        return value;
+      });
+
+      localStorage.setItem("shop", JSON.stringify(state.data));
+    },
+    decrement(state, { payload }) {
+      state.data = state.data.map((value) => {
+        if (value._id === payload) {
+          return {
+            ...value,
+            count: Number(value.count) <= 1 ? 1 : Number(value.count) - 1,
+            userPrice:
+              Number(value.count) <= 1
+                ? value.price
+                : (Number(value.count) - 1) * value.price,
+          };
+        }
+        return value;
+      });
+
+      localStorage.setItem("shop", JSON.stringify(state.data));
+    },
   },
 });
 
-export const { getData, removeData, getCouponCode } = prodcut_slice.actions;
+export const { getData, removeData, getCouponCode, increment, decrement } =
+  prodcut_slice.actions;
 
 export default prodcut_slice.reducer;
