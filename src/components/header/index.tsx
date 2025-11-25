@@ -31,6 +31,7 @@ const Header = () => {
         <div className="flex gap-5">
           <Link to={"/"}>Home</Link>
           <Link to={"/blog"}>Blog</Link>
+          <Link to={"/edit"}>Edit</Link>
         </div>
         <div className="flex items-center gap-5">
           <SearchOutlined className="text-[20px]" />
